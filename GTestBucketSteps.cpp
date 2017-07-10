@@ -24,13 +24,15 @@ struct TestListMultipartUploadsCtx {
 	std::string uploadID;
 };
 
+const char* strConfigPath = strConfigPath;
+
 //  Scenario: need to use bucket
 //    When initialize the bucket
 //    Then the bucket is initialized
 
 WHEN("^initialize the bucket$") {
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 
 	ScenarioScope<TestBucketCtx> context;
 	context->pQsService = new QingStorService(qsConfig);
@@ -43,7 +45,7 @@ THEN("^the bucket is initialized$") {
 	//REGEX_PARAM(double, expected);
 	ScenarioScope<TestBucketCtx> context;
 
-	EXPECT_NE(NULL, (const int)context->pQsBucket);
+	EXPECT_NE(NULL, (int)context->pQsBucket);
 }
 
 
@@ -58,7 +60,7 @@ Then put bucket status code is 201
 WHEN("^put bucket$") {
 	
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 
 	QingStorService qsService(qsConfig);
 
@@ -93,7 +95,7 @@ THEN("^put bucket status code is (\\d+)$") {
 
 	ScenarioScope<PutBucketOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 /*
@@ -104,7 +106,7 @@ Then put same bucket again status code is 409
 WHEN("^put same bucket again$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -134,7 +136,7 @@ THEN("^put same bucket again status code is (\\d+)$") {
 
 	ScenarioScope<PutObjectOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 
@@ -151,7 +153,7 @@ Scenario: list objects in the bucket
 WHEN("^list objects$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -174,7 +176,7 @@ THEN("^list objects status code is (\\d+)$") {
 
 	ScenarioScope<ListObjectsOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 THEN("^list objects keys count is (\\d+)$") {
@@ -198,7 +200,7 @@ Scenario: head the bucket
 WHEN("^head bucket$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -214,7 +216,7 @@ THEN("^head bucket status code is (\\d+)$") {
 
 	ScenarioScope<HeadBucketOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 
@@ -256,7 +258,7 @@ Scenario : get statistics of the bucket
 WHEN("^get bucket statistics$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -272,7 +274,7 @@ THEN("^get bucket statistics status code is (\\d+)$") {
 
 	ScenarioScope<GetBucketStatisticsOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 THEN("get bucket statistics status is \"([^\"]*)\"$") {
@@ -307,7 +309,7 @@ Scenario : list multipart uploads
 */
 GIVEN("^an object created by initiate multipart upload$"){
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -331,7 +333,7 @@ WHEN("^list multipart uploads$") {
 	ScenarioScope<TestListMultipartUploadsCtx> contextGiven;
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -378,7 +380,7 @@ THEN("^list multipart uploads count is (\\d+)$") {
 WHEN("^put bucket ACL:$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -412,7 +414,7 @@ THEN("^put bucket ACL status code is (\\d+)$") {
 
 	ScenarioScope<PutBucketACLOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 
@@ -429,7 +431,7 @@ And get bucket ACL should have grantee name "QS_ALL_USERS"
 WHEN("^get bucket ACL$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -451,7 +453,7 @@ THEN("^get bucket ACL status code is (\\d+)$") {
 
 	ScenarioScope<GetBucketACLOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 THEN("^get bucket ACL should have grantee name \"([^\"]*)\"$") {
@@ -519,7 +521,7 @@ THEN("^get bucket ACL should have grantee name \"([^\"]*)\"$") {
 WHEN("^put bucket CORS:$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -578,7 +580,7 @@ THEN("^put bucket CORS status code is (\\d+)$") {
 
 	ScenarioScope<PutBucketCORSOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 			 
 ///////////////////////////////
@@ -593,7 +595,7 @@ Scenario : get CORS of the bucket
 WHEN("^get bucket CORS$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -615,7 +617,7 @@ THEN("^get bucket CORS status code is (\\d+)$") {
 
 	ScenarioScope<GetBucketCORSOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 THEN("^get bucket CORS should have allowed origin \"([^\"]*)\"$") {
@@ -643,7 +645,7 @@ Scenario : delete CORS of the bucket
 WHEN("^delete bucket CORS$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -665,7 +667,7 @@ THEN("^delete bucket CORS status code is (\\d+)$") {
 
 	ScenarioScope<DeleteBucketCORSOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 
@@ -687,7 +689,7 @@ Scenario : set the bucket external mirror
 WHEN("^put bucket external mirror:$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -708,7 +710,7 @@ THEN("^put bucket external mirror status code is (\\d+)$") {
 
 	ScenarioScope<PutBucketExternalMirrorOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 ////////////////////////////////////////////
@@ -723,7 +725,7 @@ Scenario : get external mirror of the bucket
 WHEN("^get bucket external mirror$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -745,7 +747,7 @@ THEN("^get bucket external mirror status code (\\d+)$") {
 
 	ScenarioScope<GetBucketExternalMirrorOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 THEN("^get bucket external mirror should have source_site \"([^\"]*)\"$") {
@@ -769,7 +771,7 @@ Scenario : delete external mirror of the bucket
 WHEN("^delete bucket external mirror$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -791,7 +793,7 @@ THEN("^delete bucket external mirror status code is(\\d+)$") {
 
 	ScenarioScope<DeleteBucketExternalMirrorOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 ////  Feature: the bucket policy feature
@@ -851,7 +853,7 @@ Scenario : get policy of the bucket
 WHEN("^get bucket policy$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -873,7 +875,7 @@ THEN("^get bucket policy status code is (\\d+)$"){
 
 	ScenarioScope<GetBucketPolicyOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 THEN("^get bucket policy should have Referer \"([^\"]*)\"$") {
@@ -914,7 +916,7 @@ Scenario : delete policy of the bucket
 WHEN("^delete bucket policy$") {
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	QingStorService qsService(qsConfig);
 	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 
@@ -936,7 +938,7 @@ THEN("^delete bucket policy status code is (\\d+)$"){
 
 	ScenarioScope<DeleteBucketPolicyOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 
@@ -953,7 +955,7 @@ WHEN("^put object with key \"(.{1, })\"$") {
 	contextObjectTest->bucketName = "huang-stor";
 
 	QingStor::QsConfig qsConfig;
-	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+	qsConfig.loadConfigFile(strConfigPath);
 	contextObjectTest->pQsBucket = new Bucket(qsConfig, "huang-stor", "pek3a");
 	Bucket qsBucket = *contextObjectTest->pQsBucket;
 
@@ -980,7 +982,7 @@ THEN("^put object status code is (\\d+)$") {
 
 	ScenarioScope<PutObjectOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 //# Copy Object
@@ -1013,7 +1015,7 @@ THEN("^copy object status code is (\\d+)$") {
 
 	ScenarioScope<PutObjectOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 
@@ -1048,7 +1050,7 @@ THEN("^move object status code is (\\d+)$") {
 
 	ScenarioScope<PutObjectOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 //# GET Object
@@ -1080,7 +1082,7 @@ THEN("^get object status code is (\\d+)$") {
 
 	ScenarioScope<GetObjectOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 THEN("^get object content length is (\\d+)$") {
@@ -1182,7 +1184,7 @@ THEN("^head object status code is (\\d+)$") {
 
 	ScenarioScope<HeadObjectOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 
@@ -1214,7 +1216,7 @@ THEN("^options object status code is (\\d+)$") {
 
 	ScenarioScope<OptionsObjectOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 
@@ -1246,7 +1248,7 @@ THEN("^delete object status code is (\\d+)$") {
 
 	ScenarioScope<DeleteObjectOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 
@@ -1276,7 +1278,7 @@ THEN("^delete the move object status code is (\\d+)$") {
 
 	ScenarioScope<DeleteObjectOutput> contextOutput;
 
-	EXPECT_EQ(expected, contextOutput->GetResponseCode());
+	EXPECT_EQ(expected, (int)contextOutput->GetResponseCode());
 }
 
 //Scenario Outline :
@@ -1286,7 +1288,7 @@ THEN("^delete the move object status code is (\\d+)$") {
 
 //WHEN("^initiate multipart upload with key \"(.{1, })\"$"){
 //	QingStor::QsConfig qsConfig;
-//	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+//	qsConfig.loadConfigFile(strConfigPath);
 //	QingStorService qsService(qsConfig);
 //	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 //
@@ -1310,7 +1312,7 @@ THEN("^delete the move object status code is (\\d+)$") {
 //	ScenarioScope<TestListMultipartUploadsCtx> contextGiven;
 //
 //	QingStor::QsConfig qsConfig;
-//	qsConfig.loadConfigFile("C:/Users/Morven.Huang/Dropbox/sdk-C++/src/Debug/config.yaml");
+//	qsConfig.loadConfigFile(strConfigPath);
 //	QingStorService qsService(qsConfig);
 //	Bucket qsBucket = qsService.GetBucket("huang-stor", "pek3a");
 //
