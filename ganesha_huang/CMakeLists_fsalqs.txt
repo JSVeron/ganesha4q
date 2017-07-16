@@ -1,0 +1,24 @@
+add_definitions(
+	-D_FILE_OFFSET_BITS=64
+)
+
+SET(fsalqs_LIB_SRCS
+	main.c
+	export.c
+	handle.c
+	internal.c
+	internal.h
+)
+
+message("QS_INCLUDE_DIR ${QS_INCLUDE_DIR}")
+includee_directories(${QS_INCLUDE_DIR})
+
+add_library(fsalqs MOUDLE ${fsalqs_LIB_SRCS})
+
+target_link_libraries(fsalqs ${RGW_LIBRARIES} ${SYSTEM_LIBRARIES})
+
+set_target_properties(fsalqs PROPERTIES VERSION 4.2.0 SOVERSION 4)
+install(TARGETS fsalqs COMPONENT fsal DESTINATION ${FSAL_DESTINATION})
+
+
+

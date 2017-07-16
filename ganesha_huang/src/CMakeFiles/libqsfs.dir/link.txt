@@ -1,0 +1,2 @@
+/usr/bin/ar cq liblibqsfs.a  CMakeFiles/libqsfs.dir/qs_file.o CMakeFiles/libqsfs.dir/libqingstor.o
+/usr/bin/ranlib liblibqsfs.a
