@@ -54,10 +54,10 @@ RM = /usr/local/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/Github/ganesha_huang
+CMAKE_SOURCE_DIR = /root/Github/ganesha4q/ganesha_huang
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/Github/ganesha_huang
+CMAKE_BINARY_DIR = /root/Github/ganesha4q/ganesha_huang
 
 #=============================================================================
 # Target rules for target CMakeFiles/libqsfs.dir
@@ -66,7 +66,7 @@ CMAKE_BINARY_DIR = /root/Github/ganesha_huang
 CMakeFiles/libqsfs.dir/all:
 	$(MAKE) -f CMakeFiles/libqsfs.dir/build.make CMakeFiles/libqsfs.dir/depend
 	$(MAKE) -f CMakeFiles/libqsfs.dir/build.make CMakeFiles/libqsfs.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/Github/ganesha_huang/CMakeFiles --progress-num= "Built target libqsfs"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/Github/ganesha4q/ganesha_huang/CMakeFiles --progress-num= "Built target libqsfs"
 .PHONY : CMakeFiles/libqsfs.dir/all
 
 # Include target in all.
@@ -76,9 +76,9 @@ all: CMakeFiles/libqsfs.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/libqsfs.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/Github/ganesha_huang/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /root/Github/ganesha4q/ganesha_huang/CMakeFiles 0
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/libqsfs.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/Github/ganesha_huang/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /root/Github/ganesha4q/ganesha_huang/CMakeFiles 0
 .PHONY : CMakeFiles/libqsfs.dir/rule
 
 # Convenience name for target.

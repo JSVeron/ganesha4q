@@ -27,10 +27,10 @@ CMakeFiles/libqsfs.dir/libqingstor.o
  ./include/types/StringLikeType.h
  ./include/types/StringNotLikeType.h
  ./include/types/UploadsType.h
- /root/Github/ganesha_huang/src/XXHash/xxhash.h
- /root/Github/ganesha_huang/src/libqingstor.cpp
- /root/Github/ganesha_huang/src/libqingstor.h
- /root/Github/ganesha_huang/src/qs_file.h
+ /root/Github/ganesha4q/ganesha_huang/src/XXHash/xxhash.h
+ /root/Github/ganesha4q/ganesha_huang/src/libqingstor.cpp
+ /root/Github/ganesha4q/ganesha_huang/src/libqingstor.h
+ /root/Github/ganesha4q/ganesha_huang/src/qs_file.h
 CMakeFiles/libqsfs.dir/qs_file.o
  ./include/Bucket.h
  ./include/HttpCommon.h
@@ -57,7 +57,7 @@ CMakeFiles/libqsfs.dir/qs_file.o
  ./include/types/StringLikeType.h
  ./include/types/StringNotLikeType.h
  ./include/types/UploadsType.h
- /root/Github/ganesha_huang/src/XXHash/xxhash.h
- /root/Github/ganesha_huang/src/libqingstor.h
- /root/Github/ganesha_huang/src/qs_file.cpp
- /root/Github/ganesha_huang/src/qs_file.h
+ /root/Github/ganesha4q/ganesha_huang/src/XXHash/xxhash.h
+ /root/Github/ganesha4q/ganesha_huang/src/libqingstor.h
+ /root/Github/ganesha4q/ganesha_huang/src/qs_file.cpp
+ /root/Github/ganesha4q/ganesha_huang/src/qs_file.h

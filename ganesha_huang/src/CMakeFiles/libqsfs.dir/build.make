@@ -43,10 +43,10 @@ RM = /usr/local/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/Github/ganesha_huang/src
+CMAKE_SOURCE_DIR = /root/Github/ganesha4q/ganesha_huang/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/Github/ganesha_huang/src
+CMAKE_BINARY_DIR = /root/Github/ganesha4q/ganesha_huang/src
 
 # Include any dependencies generated for this target.
 include CMakeFiles/libqsfs.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/libqsfs.dir/flags.make
 
 CMakeFiles/libqsfs.dir/qs_file.o: CMakeFiles/libqsfs.dir/flags.make
 CMakeFiles/libqsfs.dir/qs_file.o: qs_file.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/Github/ganesha_huang/src/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/libqsfs.dir/qs_file.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/libqsfs.dir/qs_file.o -c /root/Github/ganesha_huang/src/qs_file.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/Github/ganesha4q/ganesha_huang/src/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/libqsfs.dir/qs_file.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/libqsfs.dir/qs_file.o -c /root/Github/ganesha4q/ganesha_huang/src/qs_file.cpp
 
 CMakeFiles/libqsfs.dir/qs_file.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/libqsfs.dir/qs_file.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /root/Github/ganesha_huang/src/qs_file.cpp > CMakeFiles/libqsfs.dir/qs_file.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /root/Github/ganesha4q/ganesha_huang/src/qs_file.cpp > CMakeFiles/libqsfs.dir/qs_file.i
 
 CMakeFiles/libqsfs.dir/qs_file.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/libqsfs.dir/qs_file.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /root/Github/ganesha_huang/src/qs_file.cpp -o CMakeFiles/libqsfs.dir/qs_file.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /root/Github/ganesha4q/ganesha_huang/src/qs_file.cpp -o CMakeFiles/libqsfs.dir/qs_file.s
 
 CMakeFiles/libqsfs.dir/qs_file.o.requires:
 
@@ -83,16 +83,16 @@ CMakeFiles/libqsfs.dir/qs_file.o.provides.build: CMakeFiles/libqsfs.dir/qs_file.
 
 CMakeFiles/libqsfs.dir/libqingstor.o: CMakeFiles/libqsfs.dir/flags.make
 CMakeFiles/libqsfs.dir/libqingstor.o: libqingstor.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/Github/ganesha_huang/src/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/libqsfs.dir/libqingstor.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/libqsfs.dir/libqingstor.o -c /root/Github/ganesha_huang/src/libqingstor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/root/Github/ganesha4q/ganesha_huang/src/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/libqsfs.dir/libqingstor.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/libqsfs.dir/libqingstor.o -c /root/Github/ganesha4q/ganesha_huang/src/libqingstor.cpp
 
 CMakeFiles/libqsfs.dir/libqingstor.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/libqsfs.dir/libqingstor.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /root/Github/ganesha_huang/src/libqingstor.cpp > CMakeFiles/libqsfs.dir/libqingstor.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /root/Github/ganesha4q/ganesha_huang/src/libqingstor.cpp > CMakeFiles/libqsfs.dir/libqingstor.i
 
 CMakeFiles/libqsfs.dir/libqingstor.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/libqsfs.dir/libqingstor.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /root/Github/ganesha_huang/src/libqingstor.cpp -o CMakeFiles/libqsfs.dir/libqingstor.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /root/Github/ganesha4q/ganesha_huang/src/libqingstor.cpp -o CMakeFiles/libqsfs.dir/libqingstor.s
 
 CMakeFiles/libqsfs.dir/libqingstor.o.requires:
 
@@ -117,7 +117,7 @@ liblibqsfs.a: CMakeFiles/libqsfs.dir/qs_file.o
 liblibqsfs.a: CMakeFiles/libqsfs.dir/libqingstor.o
 liblibqsfs.a: CMakeFiles/libqsfs.dir/build.make
 liblibqsfs.a: CMakeFiles/libqsfs.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/Github/ganesha_huang/src/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library liblibqsfs.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/root/Github/ganesha4q/ganesha_huang/src/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library liblibqsfs.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/libqsfs.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/libqsfs.dir/link.txt --verbose=$(VERBOSE)
 
@@ -136,6 +136,6 @@ CMakeFiles/libqsfs.dir/clean:
 .PHONY : CMakeFiles/libqsfs.dir/clean
 
 CMakeFiles/libqsfs.dir/depend:
-	cd /root/Github/ganesha_huang/src && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/Github/ganesha_huang/src /root/Github/ganesha_huang/src /root/Github/ganesha_huang/src /root/Github/ganesha_huang/src /root/Github/ganesha_huang/src/CMakeFiles/libqsfs.dir/DependInfo.cmake --color=$(COLOR)
+	cd /root/Github/ganesha4q/ganesha_huang/src && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/Github/ganesha4q/ganesha_huang/src /root/Github/ganesha4q/ganesha_huang/src /root/Github/ganesha4q/ganesha_huang/src /root/Github/ganesha4q/ganesha_huang/src /root/Github/ganesha4q/ganesha_huang/src/CMakeFiles/libqsfs.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/libqsfs.dir/depend
 

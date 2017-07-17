@@ -80,7 +80,8 @@ const std::string QsFileHandle::getObjectKey(bool omit_bucket) const
 QsFsError QsFileHandle::readDir(qingstor_readdir_callback readCallback, void *cb_arg, uint64_t *offset,
                                 bool *eof)
 {
-  Bucket * qsBucket = fs->qsBucket;
+  
+  Bucket * qsBucket = fs->libSDK.qsBucket;
   ListObjectsInput input;
   ListObjectsOutput output;
 
@@ -225,7 +226,7 @@ QSFHResult QsFileSystem::lookupFileHandle(QsFileHandle* parent, const std::strin
   HeadObjectInput input;
   HeadObjectOutput output;
 
-  QsError err = qsBucket->headObject(objKey, input, output);
+  QsError err = libSDK.qsBucket->headObject(objKey, input, output);
   if ( QsError::QS_ERR_NO_ERROR != err)
   {
     // log here
@@ -300,7 +301,7 @@ QSFHResult QsFileSystem::createFileObj(QsFileHandle* parent, const std::string n
 
     std::string objectKey = parent->getObjectKey() + name;
 
-    QsError err = qsBucket->putObject(objectKey, input, output);
+    QsError err = libSDK.qsBucket->putObject(objectKey, input, output);
     if ( QsError::QS_ERR_NO_ERROR != err)
     {
       // log here
@@ -397,7 +398,7 @@ int QsFileSystem::rename(QsFileHandle* srcParent, QsFileHandle* dstParent,
   copyInput.SetXQSMoveSource(moveSource);
   copyInput.SetContentLength(0);
 
-  QsError err = qsBucket->putObject(objectkey, copyInput, copyOutput);
+  QsError err = libSDK.qsBucket->putObject(objectkey, copyInput, copyOutput);
   if (QsError::QS_ERR_NO_ERROR != err)
   {
     // log here :network err

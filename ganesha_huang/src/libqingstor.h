@@ -14,6 +14,15 @@
 #define QS_SETATTR_ATIME  16
 #define QS_SETATTR_SIZE   32
 #define QS_SETATTR_CTIME  64
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+typedef void* libqs_t;
+
+int libqsfs_create(libqs_t *libqsfs, int argc, char **argv); //库初始化
+void libqsfs_shutdown(libqs_t libqsfs); //库去初始化
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 /*
  * release file handle
  */
@@ -39,7 +48,7 @@ int qingstor_touchfile(struct qingstor_file_system *qs_fs,
 /*
     read  directory callback
 */
-typedef bool (*qingstor_readdir_callback)(const char *name, void *arg, uint64_t offset, uint32_t flags);
+typedef bool (*qingstor_readdir_callback)(const char *name, void *arg, uint64_t offset);
 /*
 
 /*
@@ -82,19 +91,13 @@ int qingstor_rename(struct qingstor_file_system *qs_fs,
 */
 #define QS_MOUNT_FLAG_NONE     0x0000
 
-int qingstor_mount(libqs_t rgw, const char *uid, const char *bucket_name,
+int qingstor_mount(libqs_t libqsfs, const char *uid, const char *bucket_name,
                    const char *zone, struct qingstor_file_system *qs_fs,
                    uint32_t flags);
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-typedef void* libqsfs;
 
-int libqsfs_create(libqs_t *libqsfs, int argc, char **argv); //库初始化
-void libqsfs_shutdown(libqs_t libqsfs); //库去初始化
-
-///////////////////////////////////////////////////////////////////////////////////////////////
 /*
  * object types
  */

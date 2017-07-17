@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/root/Github/ganesha_huang/src/libqingstor.cpp" "/root/Github/ganesha_huang/src/CMakeFiles/libqsfs.dir/libqingstor.o"
-  "/root/Github/ganesha_huang/src/qs_file.cpp" "/root/Github/ganesha_huang/src/CMakeFiles/libqsfs.dir/qs_file.o"
+  "/root/Github/ganesha4q/ganesha_huang/src/libqingstor.cpp" "/root/Github/ganesha4q/ganesha_huang/src/CMakeFiles/libqsfs.dir/libqingstor.o"
+  "/root/Github/ganesha4q/ganesha_huang/src/qs_file.cpp" "/root/Github/ganesha4q/ganesha_huang/src/CMakeFiles/libqsfs.dir/qs_file.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

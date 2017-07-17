@@ -294,7 +294,7 @@ public:
   const std::string& getObjectName() const { return name; };
   const std::string getObjectKey(bool omit_bucket = false) const;
 
-  int readdir(rgw_readdir_cb rcb, void *cb_arg, uint64_t *offset, bool *eof,
+  int readdir(qingstor_readdir_callback rcb, void *cb_arg, uint64_t *offset, bool *eof,
               uint32_t flags);
 
   void addMarker(uint64_t off, const ObjectKey& marker) {

@@ -43,10 +43,10 @@ RM = /usr/local/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/Github/ganesha_huang
+CMAKE_SOURCE_DIR = /root/Github/ganesha4q/ganesha_huang
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/Github/ganesha_huang
+CMAKE_BINARY_DIR = /root/Github/ganesha4q/ganesha_huang
 
 # Include any dependencies generated for this target.
 include CMakeFiles/libqsfs.dir/depend.make
@@ -66,6 +66,6 @@ CMakeFiles/libqsfs.dir/clean:
 .PHONY : CMakeFiles/libqsfs.dir/clean
 
 CMakeFiles/libqsfs.dir/depend:
-	cd /root/Github/ganesha_huang && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/Github/ganesha_huang /root/Github/ganesha_huang /root/Github/ganesha_huang /root/Github/ganesha_huang /root/Github/ganesha_huang/CMakeFiles/libqsfs.dir/DependInfo.cmake --color=$(COLOR)
+	cd /root/Github/ganesha4q/ganesha_huang && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/Github/ganesha4q/ganesha_huang /root/Github/ganesha4q/ganesha_huang /root/Github/ganesha4q/ganesha_huang /root/Github/ganesha4q/ganesha_huang /root/Github/ganesha4q/ganesha_huang/CMakeFiles/libqsfs.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/libqsfs.dir/depend
 
