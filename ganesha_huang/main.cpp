@@ -1,3 +1,18 @@
+// +-------------------------------------------------------------------------
+// | Copyright (C) 2017 Yunify, Inc.
+// +-------------------------------------------------------------------------
+// | Licensed under the Apache License, Version 2.0 (the "License");
+// | you may not use this work except in compliance with the License.
+// | You may obtain a copy of the License in the LICENSE file, or at:
+// |
+// | http://www.apache.org/licenses/LICENSE-2.0
+// |
+// | Unless required by applicable law or agreed to in writing, software
+// | distributed under the License is distributed on an "AS IS" BASIS,
+// | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// | See the License for the specific language governing permissions and
+// | limitations under the License.
+// +-------------------------------------------------------------------------
 
 static const char *module_name = "QINGSTOR";
 
@@ -21,7 +36,7 @@ static struct fsal_staticfsinfo_t default_qingstor_info = {
 	.acl_support = false,
 	.cansettime = true,
 	.homogenous = true,
-	.supported_attrs = RGW_SUPPORTED_ATTRIBUTES,
+	.supported_attrs = QINGSTOR_SUPPORTED_ATTRIBUTES,
 	.maxread = FSAL_MAXIOSIZE,
 	.maxwrite = FSAL_MAXIOSIZE,
 	.umask = 0,
@@ -30,24 +45,21 @@ static struct fsal_staticfsinfo_t default_qingstor_info = {
 
 /* Module methods
  */
-
-
 static struct config_item qingstor_items[] = {
 	CONF_ITEM_PATH("qingstor_conf", 1, MAXPATHLEN, NULL,
-		rgw_fsal_module, conf_path),
+	qs_fsal_module, conf_path),
 	CONF_ITEM_STR("name", 1, MAXPATHLEN, NULL,
-		rgw_fsal_module, name),
-	CONF_ITEM_STR("cluster", 1, MAXPATHLEN, NULL,
-		rgw_fsal_module, cluster),
+	qs_fsal_module, name),
+	//CONF_ITEM_STR("cluster", 1, MAXPATHLEN, NULL,
+	//qs_fsal_module, cluster),
 	CONF_ITEM_STR("init_args", 1, MAXPATHLEN, NULL,
-		rgw_fsal_module, init_args),
+	qs_fsal_module, init_args),
 	CONF_ITEM_MODE("umask", 0,
-			rgw_fsal_module, fs_info.umask),
+	qs_fsal_module, fs_info.umask),
 	CONF_ITEM_MODE("xattr_access_rights", 0,
-			rgw_fsal_module, fs_info.xattr_access_rights),
+	qs_fsal_module, fs_info.xattr_access_rights),
 	CONFIG_EOL
 };
-
 
 struct config_block qingstor_block = {
 	.dbus_interface_name = "org.ganesha.nfsd.config.fsal.qingstor",
@@ -64,32 +76,32 @@ struct config_block qingstor_block = {
  */
 
 static fsal_status_t init_config(struct fsal_module *module_in,
-				config_file_t config_struct,
-				struct config_error_type *err_type)
+                                 config_file_t config_struct,
+                                 struct config_error_type *err_type)
 {
-	struct qingstor_fsal_module *myself =
-	    container_of(module_in, struct qingstor_fsal_module, fsal);
+	struct qs_fsal_module *myself =
+	    container_of(module_in, struct qs_fsal_module, fsal);
 
 	LogDebug(COMPONENT_FSAL,
-		 "QINGSTOR module setup.");
+	         "QINGSTOR module setup.");
 
 	myself->fs_info = default_qingstor_info;
 	(void) load_config_from_parse(config_struct,
-				      &qingstor_block,
-				      myself,
-				      true,
-				      err_type);
+	                              &qingstor_block,
+	                              myself,
+	                              true,
+	                              err_type);
 	if (!config_error_is_harmless(err_type))
 		return fsalstat(ERR_FSAL_INVAL, 0);
 
 	return fsalstat(ERR_FSAL_NO_ERROR, 0);
 }
 
- /**
- * @brief Indicate support for extended operations.
- *
- * @retval true if extended operations are supported.
- */
+/**
+* @brief Indicate support for extended operations.
+*
+* @retval true if extended operations are supported.
+*/
 
 bool support_ex(struct fsal_obj_handle *obj)
 {
@@ -120,12 +132,12 @@ bool support_ex(struct fsal_obj_handle *obj)
 
 static struct config_item export_params[] = {
 	CONF_ITEM_NOOP("name"),
-	CONF_MAND_STR("user_id", 0, MAXUIDLEN, NULL,
-		      qingstor_export, qingstor_user_id),
-	CONF_MAND_STR("access_key_id", 0, MAXKEYLEN, NULL,
-		      qingstor_export, qingstor_access_key_id),
-	CONF_MAND_STR("secret_access_key", 0, MAXSECRETLEN, NULL,
-		      qingstor_export, qingstor_secret_access_key),
+	//CONF_MAND_STR("user_id", 0, MAXUIDLEN, NULL,
+	//qs_fsal_export, qingstor_user_id),
+	CONF_MAND_STR("qs_bucket_name", 0, MAXKEYLEN, NULL,
+	qs_fsal_export, qingstor_access_key_id),
+	CONF_MAND_STR("qs_zone", 0, MAXSECRETLEN, NULL,
+	qs_fsal_export, qingstor_secret_access_key),
 	CONFIG_EOL
 };
 
@@ -139,22 +151,22 @@ static struct config_block export_param_block = {
 };
 
 static fsal_status_t create_export(struct fsal_module *module_in,
-				   void *parse_node,
-				   struct config_error_type *err_type,
-				   const struct fsal_up_vector *up_ops)
+                                   void *parse_node,
+                                   struct config_error_type *err_type,
+                                   const struct fsal_up_vector *up_ops)
 {
 	/* The status code to return */
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
 	/* The internal export object */
-	struct qingstor_export *export = NULL;
+	struct qs_fsal_export *export = NULL;
 	/* The 'private' root handle */
-	struct qingstor_handle *handle = NULL;
+	struct qs_fsal_handle *handle = NULL;
 	/* Stat for root */
 	struct stat st;
 	/* Return code */
 	int rc = 0;
-	/* Return code from RGW calls */
-	int qingstor_status;
+	/* Return code from qsfs calls */
+	int qs_fsal_status;
 	/* True if we have called fsal_export_init */
 	bool initialized = false;
 
@@ -162,64 +174,15 @@ static fsal_status_t create_export(struct fsal_module *module_in,
 	if (!QSFSM.libqs) {
 		PTHREAD_MUTEX_lock(&init_mtx);
 		if (!QSFSM.libqs) {
-			char *conf_path = NULL;
-			char *inst_name = NULL;
-			char *cluster = NULL;
-
-			int argc = 1;
-			char *argv[5] = { "nfs-ganesha",
-					  NULL, NULL, NULL, NULL };
-			int clen;
 
 			if (QSFSM.conf_path) {
-				clen = strlen(RGWFSM.conf_path) + 8;
-				conf_path = (char *) gsh_malloc(clen);
-				sprintf(conf_path, "--conf=%s",
-					RGWFSM.conf_path);
-				argv[argc] = conf_path;
-				++argc;
+				rc = librqs_create(&QSFSM.libqs, QSFSM.conf_path);
+				if (rc != 0) {
+					LogCrit(COMPONENT_FSAL,
+					        "QINGSTOR module: librqs init failed (%d)",
+					        rc);
+				}
 			}
-
-			if (QSFSM.name) {
-				clen = strlen(QSFSM.name) + 8;
-				inst_name = (char *) gsh_malloc(clen);
-				sprintf(inst_name, "--name=%s", RGWFSM.name);
-				argv[argc] = inst_name;
-				++argc;
-			}
-
-			/*
-			if (RGWFSM.cluster) {
-				clen = strlen(RGWFSM.cluster) + 8;
-				cluster = (char *) gsh_malloc(clen);
-				sprintf(cluster, "--cluster=%s",
-					RGWFSM.cluster);
-				argv[argc] = cluster;
-				++argc;
-			}
-			*/
-
-			if (RGWFSM.init_args) {
-				argv[argc] = RGWFSM.init_args;
-				++argc;
-			}
-
-			// 初始化lib库
-			rc = librgw_create(&RGWFSM.rgw, argc, argv);
-			if (rc != 0) {
-				LogCrit(COMPONENT_FSAL,
-					"QINGSTOR module: librqs init failed (%d)",
-					rc);
-			}
-
-			if (conf_path)
-				gsh_free(conf_path);
-			if (inst_name)
-				gsh_free(inst_name);
-			/*
-			if (cluster)
-				gsh_free(cluster);
-				*/
 		}
 		PTHREAD_MUTEX_unlock(&init_mtx);
 	}
@@ -233,8 +196,8 @@ static fsal_status_t create_export(struct fsal_module *module_in,
 	if (export == NULL) {
 		status.major = ERR_FSAL_NOMEM;
 		LogCrit(COMPONENT_FSAL,
-			"Unable to allocate export object for %s.",
-			op_ctx->ctx_export->fullpath);
+		        "Unable to allocate export object for %s.",
+		        op_ctx->ctx_export->fullpath);
 		goto error;
 	}
 
@@ -244,10 +207,10 @@ static fsal_status_t create_export(struct fsal_module *module_in,
 	/* get params for this export, if any */
 	if (parse_node) {
 		rc = load_config_from_node(parse_node,
-					   &export_param_block,
-					   export,
-					   true,
-					   err_type);
+		                           &export_param_block,
+		                           export,
+		                           true,
+		                           err_type);
 
 		if (rc != 0) {
 			gsh_free(export);
@@ -257,62 +220,65 @@ static fsal_status_t create_export(struct fsal_module *module_in,
 
 	initialized = true;
 
-	// 挂载得到rgw_fs，即
+	// 挂载得到qs_fs，即
 	// 本质上是为了得到qingstor_fs结构并记录在export中，将来使用
-	/*
-	rgw_status = rgw_mount(RGWFSM.rgw,
-			export->rgw_user_id,
-			export->qingstor_access_key_id,
-			export->qingstor_secret_access_key,
-			&export->qingstor_fs,
-			RGW_MOUNT_FLAG_NONE);
-	if (rgw_status != 0) {
+
+	qs_fsal_status = qingstor_mount(QSFSM.libqs,
+	                                export->qs_fsal_user_id,
+	                                export->qs_fsal_bucket_name,
+	                                export->qs_fsal_zone,
+	                                &export->qs_fs,
+	                                QS_MOUNT_FLAG_NONE);
+	if (qs_fsal_status != 0) {
 		status.major = ERR_FSAL_SERVERFAULT;
 		LogCrit(COMPONENT_FSAL,
-			"Unable to mount RGW cluster for %s.",
-			op_ctx->ctx_export->fullpath);
-		if (rgw_status == -EINVAL) {
+		        "Unable to mount Backend QingStor for %s.",
+		        op_ctx->ctx_export->fullpath);
+		/*
+		if (qs_fsal_status == -EINVAL) {
 			LogCrit(COMPONENT_FSAL,
-			"Authorization Failed for user %s ",
-			export->rgw_user_id);
+			        "Authorization Failed for user %s ",
+			        export->rgw_user_id);
 		}
+		*/
 		goto error;
 	}
-	*/
+
 
 	// 把我们的export插入到fasl链（棧）中
 	if (fsal_attach_export(module_in, &export->export.exports) != 0) {
 		status.major = ERR_FSAL_SERVERFAULT;
 		LogCrit(COMPONENT_FSAL,
-			"Unable to attach export for %s.",
-			op_ctx->ctx_export->fullpath);
+		        "Unable to attach export for %s.",
+		        op_ctx->ctx_export->fullpath);
 		goto error;
 	}
 
-	// 注册object失效函数
-	if (rgw_register_invalidate(export->rgw_fs, rgw_fs_invalidate,
-					up_ops->up_fsal_export,
-					RGW_REG_INVALIDATE_FLAG_NONE) != 0) {
-		LogCrit(COMPONENT_FSAL,
-			"Unable to register invalidates for %s.",
-			op_ctx->ctx_export->fullpath);
-		goto error;
-	}
-
+	/*
+		// 注册object失效函数
+		if (rgw_register_invalidate(export->qs_fs, rgw_fs_invalidate,
+		                            up_ops->up_fsal_export,
+		                            RGW_REG_INVALIDATE_FLAG_NONE) != 0) {
+			LogCrit(COMPONENT_FSAL,
+			        "Unable to register invalidates for %s.",
+			        op_ctx->ctx_export->fullpath);
+			goto error;
+		}
+	*/
 	export->export.fsal = module_in;
 
 	LogDebug(COMPONENT_FSAL,
-		 "QINGSTOR module export %s.",
-		 op_ctx->ctx_export->fullpath);
+	         "QINGSTOR module export %s.",
+	         op_ctx->ctx_export->fullpath);
 
-	rc = qingstor_getattr(export->rgw_fs, export->rgw_fs->root_fh, &st,
-			RGW_GETATTR_FLAG_NONE);
+	rc = qingstor_getattr(export->qs_fs, export->qs_fs->root_fh, &st,
+	                      QS_GETATTR_FLAG_NONE);
 	if (rc < 0)
-		return rgw2fsal_error(rc);
+		return qs2fsal_error(rc);
 
-	rc = construct_handle(export, export->rgw_fs->root_fh, &st, &handle);
+	rc = construct_handle(export, export->qs_fs->root_fh, &st, &handle);
 	if (rc < 0) {
-		status = rgw2fsal_error(rc);
+		status = qs2fsal_error(rc);
 		goto error;
 	}
 
@@ -323,7 +289,7 @@ static fsal_status_t create_export(struct fsal_module *module_in,
 
 	return status;
 
- error:
+error:
 	if (export) {
 		gsh_free(export);
 	}
@@ -348,17 +314,17 @@ MODULE_INIT void init(void)
 	struct fsal_module *myself = &QSFSM.fsal;
 
 	LogDebug(COMPONENT_FSAL,
-		 "QINGSTOR module registering.");
+	         "QINGSTOR module registering.");
 
 	/* register_fsal seems to expect zeroed memory. */
 	memset(myself, 0, sizeof(*myself));
 
 	if (register_fsal(myself, module_name, FSAL_MAJOR_VERSION,
-			  FSAL_MINOR_VERSION, FSAL_ID_QINGSTOR) != 0) {
+	                  FSAL_MINOR_VERSION, FSAL_ID_QINGSTOR) != 0) {
 		/* The register_fsal function prints its own log
 		   message if it fails */
 		LogCrit(COMPONENT_FSAL,
-			"QINGSTOR module failed to register.");
+		        "QINGSTOR module failed to register.");
 	}
 
 	/* Set up module operations */
@@ -380,18 +346,18 @@ MODULE_FINI void finish(void)
 	int ret;
 
 	LogDebug(COMPONENT_FSAL,
-		 "QINGSTOR module finishing.");
+	         "QINGSTOR module finishing.");
 
 	ret = unregister_fsal(&QSFSM.fsal);
 	if (ret != 0) {
 		LogCrit(COMPONENT_FSAL,
-			"QINGSTOR: unregister_fsal failed (%d)", ret);
+		        "QINGSTOR: unregister_fsal failed (%d)", ret);
 	}
 
 	/* release the library */
 
-	//if (QSFSM.rgw) {
+	if (QSFSM.libqs) {
 		/////???????????
-		//librgw_shutdown(QSFSM.rgw);
-	//}
-}
+		libqsfs_shutdown(QSFSM.libqs);
+		//}
+	}

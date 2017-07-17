@@ -1,25 +1,18 @@
-/*
- * Copyright © Red Hat 2015
- * Author: Orit Wasserman <owasserm@redhat.com>
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 3 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- *
- * -------------
- */
-
+// +-------------------------------------------------------------------------
+// | Copyright (C) 2017 Yunify, Inc.
+// +-------------------------------------------------------------------------
+// | Licensed under the Apache License, Version 2.0 (the "License");
+// | you may not use this work except in compliance with the License.
+// | You may obtain a copy of the License in the LICENSE file, or at:
+// |
+// | http://www.apache.org/licenses/LICENSE-2.0
+// |
+// | Unless required by applicable law or agreed to in writing, software
+// | distributed under the License is distributed on an "AS IS" BASIS,
+// | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// | See the License for the specific language governing permissions and
+// | limitations under the License.
+// +-------------------------------------------------------------------------
 /**
  * @file   internal.h
  * @brief Internal declarations for the QINGSTOR FSAL
@@ -41,19 +34,17 @@
 /**
  * QINGSTOR Main (global) module object
  */
-
 struct qs_fsal_module {
 	struct fsal_module fsal;
 	fsal_staticfsinfo_t fs_info;
-	/*
 	char *conf_path;
 	char *name;
-	char *cluster;
+	//char *cluster;
 	char *init_args;
-	librgw_t rgw;
-	*/
-	libqs_t libqs;
+	//librgw_t rgw;
+	libqs_t libqsfs;
 };
+
 extern struct qs_fsal_module QSFSM;
 
 #define MAXUIDLEN 32
@@ -68,10 +59,12 @@ struct qs_fsal_export {
 	struct fsal_export export;	/*< The public export object */
 	struct qingstor_file_system *qs_fs;		/*< "Opaque" fs handle */
 	struct qs_fsal_handle *root;    /*< root handle */
-	char *rgw_name;
-	char *rgw_user_id;
-	char *rgw_access_key_id;
-	char *rgw_secret_access_key;
+	char *qs_fsal_name;
+	char *qs_fsal_user_id;
+	char *qs_fsal_bucket_name;
+	char *qs_fsal_zone;
+	//char *qs_fsal_access_key_id;
+	//char *qs_fsal_secret_access_key;
 };
 
 /**
@@ -105,13 +98,11 @@ struct qs_fsal_open_state {
 #define QINGSTOR_SUPPORTED_ATTRIBUTES ((const attrmask_t) (ATTRS_POSIX))
 
 
-
-
 /* Prototypes */
 int construct_handle(struct qs_fasl_export *export,
-		     struct qingstor_file_handle *rgw_file_handle,
-		     struct stat *st,
-		     struct qs_fsal_handle **obj);
+                     struct qingstor_file_handle *rgw_file_handle,
+                     struct stat *st,
+                     struct qs_fsal_handle **obj);
 
 void deconstruct_handle(struct qs_fsal_handle *obj);
 

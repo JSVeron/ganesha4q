@@ -6,7 +6,7 @@
  */
 
 void qingstor_fh_release(struct qingstor_file_system *qs_fs, struct qingstor_file_handle *qs_fh,
-    uint32_t flags)
+                         uint32_t flags)
 {
   QsFileSystem *fs = static_cast<QsFileSystem*>(qs_fs->fs_private);
   QsFileHandle *fh = static_cast<QsFileHandle*>(qs_fh->fh_private);//getQsFileHandle(qs_fh);
@@ -21,85 +21,104 @@ void qingstor_fh_release(struct qingstor_file_system *qs_fs, struct qingstor_fil
   lookup object by name (POSIX style)
 */
 int qingstor_lookup(struct qingstor_file_system *qs_fs,
-        struct qingstor_file_handle *parent_fh, const char* path,
-        struct qingstor_file_handle **out_fh,
-        uint32_t flags)
+                    struct qingstor_file_handle *parent_fh, const char* path,
+                    struct qingstor_file_handle **out_fh,
+                    uint32_t flags)
 {
-    //CephContext* cct = static_cast<CephContext*>(rgw_fs->rgw);
-    QsFileSystem *fs = static_cast<QsFileSystem*>(qs_fs->fs_private);
-    QsFileHandle* parent = static_cast<QsFileHandle*>(parent_fh->fh_private);
-    if ((! parent) || (! parent->isDir())) {
-      /* bad parent */
-      return -EINVAL;
-    }
+  //CephContext* cct = static_cast<CephContext*>(rgw_fs->rgw);
+  QsFileSystem *fs = static_cast<QsFileSystem*>(qs_fs->fs_private);
+  QsFileHandle* parent = static_cast<QsFileHandle*>(parent_fh->fh_private);
+  if ((! parent) || (! parent->isDir())) {
+    /* bad parent */
+    return -EINVAL;
+  }
 
-    QsFileHandle* fh;
-    QSFHResult reuslt(QS_FS_ERR_NO_ERROR);
+  QsFileHandle* fh;
+  QSFHResult reuslt(QS_FS_ERR_NO_ERROR);
 
-      if (parent->isRoot() && 
-        unlikely((strcmp(path, "..") == 0) || (strcmp(path, "/") == 0))) {
-            fh = parent;
-      }
-      else{
-          reuslt = fs->lookupFileHandle(parent, path, flags);
-          if(QsFsError::QS_FS_ERR_NO_ERROR == reuslt.getErr())
-              fh = reuslt.getFH(); 
-          else
-              return -ENOENT;     
-      }  
+  if (parent->isRoot() &&
+      unlikely((strcmp(path, "..") == 0) || (strcmp(path, "/") == 0))) {
+    fh = parent;
+  }
+  else {
+    reuslt = fs->lookupFileHandle(parent, path, flags);
+    if (QsFsError::QS_FS_ERR_NO_ERROR == reuslt.getErr())
+      fh = reuslt.getFH();
+    else
+      return -ENOENT;
+  }
 
-    //struct qingstor_file_handle *rfh = fh->get_fh();
-     if(fh){
-        *out_fh = fh->getWrapperHandle();
-     }
+  //struct qingstor_file_handle *rfh = fh->get_fh();
+  if (fh) {
+    *out_fh = fh->getWrapperHandle();
+  }
 
-    return 0;
-} /* rgw_lookup */
+  return 0;
+} /* qingstor_lookup */
 
+/*
+  lookup object by handle (NFS style)
+*/
+int qingstor_lookup_handle(struct qingstor_file_system *qs_fs, struct qingstor_fh_hk *fh_hk,
+                           struct qingstor_file_handle **fh, uint32_t flags)
+{
+  QsFileSystem *fs = static_cast<QsFileSystem*>(qs_fs->fs_private);
+
+  QsFileHandle* qs_fh = fs->lookup_handle(*fh_hk);
+  if (! qs_fh) {
+    /* not found */
+    return -ENOENT;
+  }
+
+  struct qingstor_file_handle *rfh = qs_fh->get_fh();
+  *fh = rfh;
+
+  return 0;
+}
 
 /*
   lookup object by name (POSIX style)
 */
 int qingstor_touchfile(struct qingstor_file_system *qs_fs,
-        struct qingstor_file_handle *parent_fh, 
-        const char* path, struct stat *st, uint32_t mask,
-        struct qingstor_file_handle **out_fh)
+                       struct qingstor_file_handle *parent_fh,
+                       const char* path, struct stat *st, uint32_t mask,
+                       struct qingstor_file_handle **out_fh)
 {
-    //CephContext* cct = static_cast<CephContext*>(rgw_fs->rgw);
-    QsFileSystem *fs = static_cast<QsFileSystem*>(qs_fs->fs_private);
-    QsFileHandle* parent = static_cast<QsFileHandle*>(parent_fh->fh_private);
-    if ((! parent) || (! parent->isDir())) {
-      /* bad parent */
-      return -EINVAL;
-    }
+  //CephContext* cct = static_cast<CephContext*>(rgw_fs->rgw);
+  QsFileSystem *fs = static_cast<QsFileSystem*>(qs_fs->fs_private);
+  QsFileHandle* parent = static_cast<QsFileHandle*>(parent_fh->fh_private);
+  if ((! parent) || (! parent->isDir())) {
+    /* bad parent */
+    return -EINVAL;
+  }
 
-    QsFileHandle* fh;
-    
+  QsFileHandle* fh;
 
-      if (parent->isRoot() && 
-        unlikely((strcmp(path, "..") == 0) || (strcmp(path, "/") == 0))) {
-            fh = parent;
-      }
-      else{
-          QSFHResult reuslt = fs->touchFile(parent, path, st, mask);
-          if(QsFsError::QS_FS_ERR_NO_ERROR == reuslt.getErr())
-              fh = reuslt.getFH(); 
-          else
-              return -ENOENT; 
-      }
 
-    //struct qingstor_file_handle *rfh = fh->get_fh();
-     if(fh){
-        *out_fh = fh->getWrapperHandle();
-     }
+  if (parent->isRoot() &&
+      unlikely((strcmp(path, "..") == 0) || (strcmp(path, "/") == 0))) {
+    fh = parent;
+  }
+  else {
+    QSFHResult reuslt = fs->touchFile(parent, path, st, mask);
+    if (QsFsError::QS_FS_ERR_NO_ERROR == reuslt.getErr())
+      fh = reuslt.getFH();
+    else
+      return -ENOENT;
+  }
 
-    return 0;
+  //struct qingstor_file_handle *rfh = fh->get_fh();
+  if (fh) {
+    *out_fh = fh->getWrapperHandle();
+  }
+
+  return 0;
 } /* qingstor_touchfile */
 
 
 int qingstor_readdir(struct qingstor_file_system *qs_fs,
-    struct qingstor_file_handle *dir_fh, uint64_t *offset,
-    qingstor_readdir_callback rcb, void *cb_arg, bool *eof)
+                     struct qingstor_file_handle *dir_fh, uint64_t *offset,
+                     qingstor_readdir_callback rcb, void *cb_arg, bool *eof)
 {
   QsFileHandle* dirFH = static_cast<QsFileHandle*>(dir_fh->fh_private);
   if (! dirFH) {
@@ -127,25 +146,25 @@ void qingstor_getattr(struct qingstor_file_handle *qs_fh, struct stat *st)
   set unix attributes for object
 */
 int qingstor_setattr(struct qingstor_file_handle *qs_fh, struct stat *st,
-    uint32_t mask)
+                     uint32_t mask)
 {
-    QsFileHandle* fh = static_cast<QsFileHandle*>(qs_fh->fh_private);
+  QsFileHandle* fh = static_cast<QsFileHandle*>(qs_fh->fh_private);
 
-    fh->createStat(st, mask);
+  fh->createStat(st, mask);
 
-    timespec time;
-    clock_gettime(CLOCK_REALTIME, &time);
-    fh->setCtimes(time);
+  timespec time;
+  clock_gettime(CLOCK_REALTIME, &time);
+  fh->setCtimes(time);
 
-    return 0;
+  return 0;
 }
 
 /*
   rename object
 */
 int qingstor_rename(struct qingstor_file_system *qs_fs,
-         struct qingstor_file_handle *src, const char* src_name,
-         struct qingstor_file_handle *dst, const char* dst_name)
+                    struct qingstor_file_handle *src, const char* src_name,
+                    struct qingstor_file_handle *dst, const char* dst_name)
 {
   QsFileSystem *fs = static_cast<QsFileSystem*>(qs_fs->fs_private);
 
@@ -154,6 +173,71 @@ int qingstor_rename(struct qingstor_file_system *qs_fs,
 
   return fs->rename(src_fh, dst_fh, src_name, dst_name);
 }
+
+
+/*
+ attach QingStor namespace
+*/
+int qingstor_mount(struct libqs_t libqsfs, const char *uid, const char *bucket_name,
+                   const char *zone, struct qingstor_file_system **qs_fs,
+                   uint32_t flags)
+{
+  int rc = 0;
+  if ( bucket_name || zone )
+  {
+    // log here
+    // invaild bucket_name or zone, faild to mount
+    rc = -EINVAL;
+  }
+
+  LibSDK libSDK = (LibSDK) * libqsfs;
+  QingStor::QsConfig qsConfig;
+  if (libSDK.qsService)
+  {
+    qsConfig = libSDK.qsService->GetConfig();
+  }
+
+  libSDK.qsBucket = new Bucket(qsConfig, bucket_name, zone);
+
+  /* stash access data for "mount" */
+  QsFileSystem* new_fs = new QsFileSystem(libSDK, uid, bucket_name,
+                                          zone);
+  //assert(new_fs);
+
+  // authorize?????
+  /*
+  rc = new_fs->authorize(rgwlib.get_store());
+  if (rc != 0) {
+    delete new_fs;
+    return -EINVAL;
+  }
+  */
+
+  struct qingstor_file_system *fs = new_fs->get_fs();
+  fs->libqsfs = libqsfs;
+
+  /* XXX we no longer assume "/" is unique, but we aren't tracking the
+   * roots atm */
+
+  *qs_fs = fs;
+
+  return 0;
+}
+
+/*
+ detach QingStor namespace
+*/
+int qingstor_umount(qingstor_file_system * qs_fs, uint32_t flags)
+{
+  QsFileSystem *fs = static_cast<QsFileSystem*>(qs_fs->fs_private);
+  if (fs)
+  {
+    fs->close();
+  }
+
+  return 0;
+}
+
 
 
 //////////////////////////////////////////
@@ -165,7 +249,7 @@ int rgw_readdir(struct rgw_fs *rgw_fs,
 {
   RGWFileHandle* parent = get_rgwfh(parent_fh);
   if (! parent) {
-    /// bad parent 
+    /// bad parent
     return -EINVAL;
   }
   int rc = parent->readdir(rcb, cb_arg, offset, eof, flags);
@@ -179,7 +263,7 @@ int rgw_readdir(struct rgw_fs *rgw_fs,
   if (err == QS_ERROR_NO_ERROR){
     // fill in stat data
     timespec current_time;
-    clock_gettime(CLOCK_REALTIME, &current_time); 
+    clock_gettime(CLOCK_REALTIME, &current_time);
 
     parent.state.mtime = current_time;
     parent.state.ctime = current_time;
@@ -187,7 +271,7 @@ int rgw_readdir(struct rgw_fs *rgw_fs,
   }
   else{
 
-    // log 
+    // log
   }
 
 
@@ -205,7 +289,7 @@ int rgw_readdir(struct rgw_fs *rgw_fs,
       uint64_t dev;
       uint64_t size;
       uint64_t nlink;
-      uint32_t owner_uid; // XXX need Unix attr 
+      uint32_t owner_uid; // XXX need Unix attr
       uint32_t owner_gid; // XXX need Unix attr
       mode_t unix_mode;
       struct timespec ctime;
@@ -217,7 +301,7 @@ int rgw_readdir(struct rgw_fs *rgw_fs,
 
 
     int stat(struct stat* st) {
-      // partial Unix attrs 
+      // partial Unix attrs
       memset(st, 0, sizeof(struct stat));
       st->st_dev = state.dev;
       st->st_ino = fh.fh_hk.object; // XXX
@@ -271,21 +355,21 @@ int qingstor_create(struct rgw_fs *rgw_fs, struct rgw_file_handle *parent_fh,
   if ((! parent) ||
       (parent->is_root()) ||
       (parent->is_file())) {
-    // bad parent 
+    // bad parent
     return -EINVAL;
   }
 
-  
+
   // 1.检查是否已存在相同的名字的object
     rc = rgw_lookup(get_fs(), parent->get_fh(), name, &lfh,
         RGW_LOOKUP_FLAG_NONE);
     if (! rc) {
-      // conflict! 
+      // conflict!
       rc = rgw_fh_rele(get_fs(), lfh, RGW_FH_RELE_FLAG_NONE);
       return MkObjResult{nullptr, -EEXIST};
     }
   // 2.检查名字是否合法
-    // expand and check name 
+    // expand and check name
     if(!valid_fs_object_name(name)){
       return //;
     }
@@ -297,58 +381,52 @@ int qingstor_create(struct rgw_fs *rgw_fs, struct rgw_file_handle *parent_fh,
 
     QsError err = qs_put_object(name, &input, &output);
     if (err == QS_ERROR_NO_ERROR){
-    // fill in stat data 
+    // fill in stat data
     timespec current_time;
-      clock_gettime(CLOCK_REALTIME, &current_time); 
+      clock_gettime(CLOCK_REALTIME, &current_time);
 
     parent.state.mtime = current_time;
     parent.state.ctime = current_time;
 
     }
     else{
-  
-      // log 
+
+      // log
     }
 
 
   return get<1>(fhr);
-} 
+}
 */
 /* qingstor_create*/
 
 
-/*
- attach qingstor namespace
-*/
-/*
-  int qingstor_mount(libqs_t libqs, const char *uid, const char *acc_key,
-		const char *sec_key, struct rgw_fs **rgw_fs,
-		uint32_t flags)
+
+//////////////////////////////////////////////////////////////////////////////////
+//libqsfs
+int librqs_create(libqs_t* libqsfs, const char* conf_path)
 {
-  int rc = 0;
+  using namespace QingStor;
 
-  // stash access data for "mount" 
-  RGWLibFS* new_fs = new RGWLibFS(static_cast<CephContext*>(rgw), uid, acc_key,
-				  sec_key);
-  assert(new_fs);
+  int rc = -EINVAL;
 
-  rc = new_fs->authorize(rgwlib.get_store());
-  if (rc != 0) {
-    delete new_fs;
-    return -EINVAL;
-  }
+  QingStorService::initService("./");
+  QingStor::QsConfig qsConfig;
+  qsConfig.loadConfigFile(conf_path);
 
-  // register fs for shared gc 
-  rgwlib.get_fe()->get_process()->register_fs(new_fs);
+  LibSDK* libSDK = new LibSDK();
+  libSDK->qsService = new QingStorService(qsConfig);
+  //Bucket* qsBucket = new Bucket(qsConfig, "huang-stor", "pek3a");;
+  *libqsfs = libSDK;
 
-  struct rgw_fs *fs = new_fs->get_fs();
-  fs->rgw = rgw;
-
-  // XXX we no longer assume "/" is unique, but we aren't tracking the
-  // roots atm 
-
-  *rgw_fs = fs;
-
-  return 0;
+  return rc;
 }
-*/
+
+void librgw_shutdown(libqs_t libqsfs)
+{
+  using namespace QingStor;
+
+  // add time to confirm safe thread op.
+  QingStorService::shutdown();
+  //delete libqsfs->
+}

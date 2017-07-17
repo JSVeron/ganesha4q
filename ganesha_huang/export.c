@@ -1,29 +1,21 @@
-/*
- * vim:noexpandtab:shiftwidth=8:tabstop=8:
- *
- * Copyright (C) Red Hat, 2015
- * Author: Orit Wasserman <owasserm@redhat.com>
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA
- *
- * -------------
- */
+// +-------------------------------------------------------------------------
+// | Copyright (C) 2017 Yunify, Inc.
+// +-------------------------------------------------------------------------
+// | Licensed under the Apache License, Version 2.0 (the "License");
+// | you may not use this work except in compliance with the License.
+// | You may obtain a copy of the License in the LICENSE file, or at:
+// |
+// | http://www.apache.org/licenses/LICENSE-2.0
+// |
+// | Unless required by applicable law or agreed to in writing, software
+// | distributed under the License is distributed on an "AS IS" BASIS,
+// | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// | See the License for the specific language governing permissions and
+// | limitations under the License.
+// +-------------------------------------------------------------------------
 
 /* export.c
- * RGW FSAL export object
+ * QingStor FSAL export object
  */
 
 #include <limits.h>
@@ -53,14 +45,14 @@ static void release(struct fsal_export *export_pub)
 {
 	/* The private, expanded export */
 	struct qingstor_export *export =
-	    container_of(export_pub, struct qingstor_export, export);
+	    container_of(export_pub, struct qs_fsal_export, export);
 
-	/*
-	int rc = rgw_umount(export->rgw_fs, RGW_UMOUNT_FLAG_NONE);
-	assert(rc == 0);
-	*/
+
+	int rc = qingstor_umount(export->qs_fs, QS_UMOUNT_FLAG_NONE);
+	//assert(rc == 0);
+
 	deconstruct_handle(export->root);
-	export->rgw_fs = NULL;
+	export->qs_fs = NULL;
 	export->root = NULL;
 
 	fsal_detach_export(export->export.fsal, &export->export.exports);
@@ -87,15 +79,15 @@ static void release(struct fsal_export *export_pub)
  */
 
 static fsal_status_t lookup_path(struct fsal_export *export_pub,
-				 const char *path,
-				 struct fsal_obj_handle **pub_handle,
-				 struct attrlist *attrs_out)
+                                 const char *path,
+                                 struct fsal_obj_handle **pub_handle,
+                                 struct attrlist *attrs_out)
 {
 	/* The 'private' full export handle */
-	struct rgw_export *export =
-	    container_of(export_pub, struct rgw_export, export);
+	struct qingstor_export *export =
+	    container_of(export_pub, struct qingstor_export, export);
 	/* The 'private' full object handle */
-	struct rgw_handle *handle = NULL;
+	struct qs_fsal_handle *handle = NULL;
 	/* FSAL status structure */
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
 	/* The buffer in which to store stat info */
@@ -103,7 +95,7 @@ static fsal_status_t lookup_path(struct fsal_export *export_pub,
 	/* Return code from Ceph */
 	int rc;
 	/* temp filehandle */
-	struct rgw_file_handle *rgw_fh;
+	struct qingstor_file_handle *qs_fh;
 
 	*pub_handle = NULL;
 
@@ -112,28 +104,28 @@ static fsal_status_t lookup_path(struct fsal_export *export_pub,
 	 * suspicious, so let RGW figure it out (hopefully, that does not
 	 * leak refs)
 	 */
-	rc = rgw_lookup(export->rgw_fs, export->rgw_fs->root_fh, path,
-			&rgw_fh, RGW_LOOKUP_FLAG_NONE);
+	rc = qingstor_lookup(export->qs_fs, export->qs_fs->root_fh, path,
+	                     &qs_fh, QS_LOOKUP_FLAG_NONE);
 	if (rc < 0)
-		return rgw2fsal_error(rc);
+		return qs2fsal_error(rc);
 
 	/* get Unix attrs */
-	rc = rgw_getattr(export->rgw_fs, rgw_fh, &st, RGW_GETATTR_FLAG_NONE);
+	rc = qingstor_getattr(export->qs_fs, qs_fh, &st, QS_GETATTR_FLAG_NONE);
 	if (rc < 0) {
-		return rgw2fsal_error(rc);
+		return qs2fsal_error(rc);
 	}
 
 	/* fixup export fsid */
-	rc = rgw_getattr(export->rgw_fs, export->rgw_fs->root_fh,
-			 &st_root, RGW_GETATTR_FLAG_NONE);
+	rc = qingstor_getattr(export->qs_fs, export->qs_fs->root_fh,
+	                      &st_root, QS_GETATTR_FLAG_NONE);
 	if (rc < 0) {
-		return rgw2fsal_error(rc);
+		return qs2fsal_error(rc);
 	}
 	st.st_dev = st_root.st_dev;
 
-	rc = construct_handle(export, rgw_fh, &st, &handle);
+	rc = construct_handle(export, qs_fh, &st, &handle);
 	if (rc < 0) {
-		return rgw2fsal_error(rc);
+		return qs2fsal_error(rc);
 	}
 
 	*pub_handle = &handle->handle;
@@ -155,16 +147,16 @@ static fsal_status_t lookup_path(struct fsal_export *export_pub,
  * @param[out] fh_desc  Address and length of key
  */
 static fsal_status_t wire_to_host(struct fsal_export *exp_hdl,
-				  fsal_digesttype_t in_type,
-				  struct gsh_buffdesc *fh_desc,
-				  int flags)
+                                  fsal_digesttype_t in_type,
+                                  struct gsh_buffdesc *fh_desc,
+                                  int flags)
 {
 	switch (in_type) {
-		/* Digested Handles */
+	/* Digested Handles */
 	case FSAL_DIGEST_NFSV3:
 	case FSAL_DIGEST_NFSV4:
 		/* wire handles */
-		fh_desc->len = sizeof(struct rgw_fh_hk);
+		fh_desc->len = sizeof(struct qingstor_fh_hk);
 		break;
 	default:
 		return fsalstat(ERR_FSAL_SERVERFAULT, 0);
@@ -186,13 +178,13 @@ static fsal_status_t wire_to_host(struct fsal_export *exp_hdl,
  * @return FSAL status.
  */
 static fsal_status_t create_handle(struct fsal_export *export_pub,
-				   struct gsh_buffdesc *desc,
-				   struct fsal_obj_handle **pub_handle,
-				   struct attrlist *attrs_out)
+                                   struct gsh_buffdesc *desc,
+                                   struct fsal_obj_handle **pub_handle,
+                                   struct attrlist *attrs_out)
 {
 	/* Full 'private' export structure */
-	struct rgw_export *export =
-	    container_of(export_pub, struct rgw_export, export);
+	struct qingstor_export *export =
+	    container_of(export_pub, struct qingstor_export, export);
 	/* FSAL status to return */
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
 	/* The FSAL specific portion of the handle received by the
@@ -201,33 +193,33 @@ static fsal_status_t create_handle(struct fsal_export *export_pub,
 	/* Stat buffer */
 	struct stat st;
 	/* Handle to be created */
-	struct rgw_handle *handle = NULL;
+	struct qs_fsal_handle *handle = NULL;
 	/* RGW fh hash key */
-	struct rgw_fh_hk fh_hk;
+	struct qingstor_fh_hk fh_hk;
 	/* RGW file handle instance */
-	struct rgw_file_handle *rgw_fh;
+	struct qingstor_file_handle *qs_fh;
 
 	*pub_handle = NULL;
 
-	if (desc->len != sizeof(struct rgw_fh_hk)) {
+	if (desc->len != sizeof(struct qingstor_fh_hk)) {
 		status.major = ERR_FSAL_INVAL;
 		return status;
 	}
 
 	memcpy((char *) &fh_hk, desc->addr, desc->len);
 
-	rc = rgw_lookup_handle(export->rgw_fs, &fh_hk, &rgw_fh,
-			RGW_LOOKUP_FLAG_NONE);
+	rc = qingstor_lookup_handle(export->rgw_fs, &fh_hk, &qs_fh,
+	                            RGW_LOOKUP_FLAG_NONE);
 	if (rc < 0)
-		return rgw2fsal_error(-ESTALE);
+		return qs2fsal_error(-ESTALE);
 
-	rc = rgw_getattr(export->rgw_fs, rgw_fh, &st, RGW_GETATTR_FLAG_NONE);
+	rc = qingstor_getattr(export->qs_fs, qs_fh, &st, RGW_GETATTR_FLAG_NONE);
 	if (rc < 0)
-		return rgw2fsal_error(rc);
+		return qs2fsal_error(rc);
 
-	rc = construct_handle(export, rgw_fh, &st, &handle);
+	rc = construct_handle(export, qs_fh, &st, &handle);
 	if (rc < 0) {
-		return rgw2fsal_error(rc);
+		return qs2fsal_error(rc);
 	}
 
 	*pub_handle = &handle->handle;
@@ -252,22 +244,22 @@ static fsal_status_t create_handle(struct fsal_export *export_pub,
  */
 
 static fsal_status_t get_fs_dynamic_info(struct fsal_export *export_pub,
-					 struct fsal_obj_handle *obj_hdl,
-					 fsal_dynamicfsinfo_t *info)
+        struct fsal_obj_handle *obj_hdl,
+        fsal_dynamicfsinfo_t *info)
 {
 	/* Full 'private' export */
-	struct rgw_export *export =
-	    container_of(export_pub, struct rgw_export, export);
+	struct qingstor_export *export =
+	    container_of(export_pub, struct qingstor_export, export);
 
 	int rc = 0;
 
 	/* Filesystem stat */
-	struct rgw_statvfs vfs_st;
+	struct qingstor_statvfs vfs_st;
 
-	rc = rgw_statfs(export->rgw_fs, export->rgw_fs->root_fh, &vfs_st,
-			RGW_STATFS_FLAG_NONE);
+	rc = rgw_statfs(export->qs_fs, export->qs_fs->root_fh, &vfs_st,
+	                RGW_STATFS_FLAG_NONE);
 	if (rc < 0)
-		return rgw2fsal_error(rc);
+		return qs2fsal_error(rc);
 
 	/* TODO: implement in rgw_file */
 	memset(info, 0, sizeof(fsal_dynamicfsinfo_t));
@@ -296,7 +288,7 @@ static fsal_status_t get_fs_dynamic_info(struct fsal_export *export_pub,
  */
 
 static bool fs_supports(struct fsal_export *export_pub,
-			fsal_fsinfo_options_t option)
+                        fsal_fsinfo_options_t option)
 {
 	struct fsal_staticfsinfo_t *info = rgw_staticinfo(export_pub->fsal);
 	return fsal_supports(info, option);

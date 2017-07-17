@@ -1,5 +1,22 @@
+// +-------------------------------------------------------------------------
+// | Copyright (C) 2017 Yunify, Inc.
+// +-------------------------------------------------------------------------
+// | Licensed under the Apache License, Version 2.0 (the "License");
+// | you may not use this work except in compliance with the License.
+// | You may obtain a copy of the License in the LICENSE file, or at:
+// |
+// | http://www.apache.org/licenses/LICENSE-2.0
+// |
+// | Unless required by applicable law or agreed to in writing, software
+// | distributed under the License is distributed on an "AS IS" BASIS,
+// | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// | See the License for the specific language governing permissions and
+// | limitations under the License.
+// +-------------------------------------------------------------------------
 
-struct qingstor_fsal_module QSFSM;
+#include "internal.h"
+
+struct qs_fsal_module QSFSM;
 
 /**
  * @brief FSAL status from RGW error
@@ -148,9 +165,9 @@ fsal_status_t qs2fsal_error(const int rgw_errorcode)
  */
 
 int construct_handle(struct qingstor_export *export,
-		     struct qingstor_file_handle *qingstor_fh,
-		     struct stat *st,
-		     struct qs_fsal_handle **obj)
+                     struct qingstor_file_handle *qingstor_fh,
+                     struct stat *st,
+                     struct qs_fsal_handle **obj)
 
 {
 	/* Poitner to the handle under construction */
@@ -165,7 +182,7 @@ int construct_handle(struct qingstor_export *export,
 	constructing->up_ops = export->export.up_ops; /* XXXX going away */
 
 	fsal_obj_handle_init(&constructing->handle, &export->export,
-			     posix2fsal_type(st->st_mode));
+	                     posix2fsal_type(st->st_mode));
 	handle_ops_init(&constructing->handle.obj_ops);
 	constructing->handle.fsid = posix2fsal_fsid(st->st_dev);
 	constructing->handle.fileid = st->st_ino;
