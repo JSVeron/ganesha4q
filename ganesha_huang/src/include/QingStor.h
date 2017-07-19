@@ -112,6 +112,8 @@ public:
     static void initService(const std::string logPath);
     static void shutdownService();
 
+	QsConfig GetConfig(){return m_qsConfig;};
+
     Bucket GetBucket(std::string strBucketName, std::string strZone);
 
 	// ListBuckets does Retrieve the bucket list.

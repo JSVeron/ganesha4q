@@ -5,17 +5,18 @@ SET(CMAKE_BUILD_TYPE "Debug")
 
 
 SET(libqsfs_LIB_SRCS
-	qs_file.cpp
-	qs_file.h
-	libqingstor.cpp
-	libqingstor.h
+	main.c
+	internal.c
+	internal.h
+	handle.c
+	export.c
 )
 
 include_directories(${CUKE_INCLUDE_DIRS} ./src/)
 
 add_library(libqsfs ${libqsfs_LIB_SRCS})
 
-target_link_libraries(libqsfs  /root/Github/ganesha4q/src/libqingstor.so /root/Github/ganesha4q/lib/libjsoncpp.so)
+target_link_libraries(libqsfs  /root/Github/ganesha4q/src/libqsfs.a)
 
 #if(GMOCK_FOUND)
     #add_executable(GTestBucketSteps src/GTestBucketSteps.cpp)

@@ -1,0 +1,32 @@
+/root/Github/ganesha4q/src/GTestBucketSteps.cpp:100: Failure
+Expected: (__null) != (__null), actual: 0 vs 0
+/root/Github/ganesha4q/src/GTestBucketSteps.cpp:944: Failure
+      Expected: expected
+      Which is: "*.example1.com"
+To be equal to: referer
+      Which is: ""
+/root/Github/ganesha4q/src/GTestBucketSteps.cpp:1091: Failure
+      Expected: expected
+      Which is: 201
+To be equal to: (int)contextOutput->GetResponseCode()
+      Which is: 400
+/root/Github/ganesha4q/src/GTestBucketSteps.cpp:1527: Failure
+      Expected: expected
+      Which is: 201
+To be equal to: (double)contextOutput->GetResponseCode()
+      Which is: 500
+/root/Github/ganesha4q/src/GTestBucketSteps.cpp:1527: Failure
+      Expected: expected
+      Which is: 201
+To be equal to: (double)contextOutput->GetResponseCode()
+      Which is: 500
+/root/Github/ganesha4q/src/GTestBucketSteps.cpp:1527: Failure
+      Expected: expected
+      Which is: 201
+To be equal to: (double)contextOutput->GetResponseCode()
+      Which is: 500
+/root/Github/ganesha4q/src/GTestBucketSteps.cpp:76: Failure
+      Expected: expected
+      Which is: 200
+To be equal to: (double)contextOutput->GetResponseCode()
+      Which is: 400

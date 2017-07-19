@@ -374,6 +374,7 @@ public:
 
   void releaseFileHandle(QsFileHandle *qsFileHandle);
 
+  void close();
   //int readDir(qingstor_readdir_callback readCallback, void *cb_arg, uint64_t *offset,
   //bool *eof, uint32_t flags);
 
@@ -383,6 +384,7 @@ public:
     return ++fs_inst_counter;
   }
 
+  qingstor_file_system * getFS() { return &fs; }
   uint32_t get_inst() { return rootFH.state.dev; }
 
 private:

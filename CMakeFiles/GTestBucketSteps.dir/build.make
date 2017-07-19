@@ -91,6 +91,7 @@ GTestBucketSteps_EXTERNAL_OBJECTS =
 GTestBucketSteps: CMakeFiles/GTestBucketSteps.dir/src/GTestBucketSteps.o
 GTestBucketSteps: CMakeFiles/GTestBucketSteps.dir/build.make
 GTestBucketSteps: src/libqingstor.so
+GTestBucketSteps: lib/libjsoncpp.so
 GTestBucketSteps: src/libcucumber-cpp.a
 GTestBucketSteps: src/libgtest.a
 GTestBucketSteps: src/libboost_regex.so

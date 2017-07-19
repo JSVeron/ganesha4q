@@ -446,5 +446,7 @@ QsFileHandle* QsFileSystem::createFileHandle(QsFileHandle* parent, const std::st
   return new QsFileHandle(this, get_inst(), parent, fhk, obj_name, flags);
 }
 
-
+void QsFileSystem:: close(){
+  //state.flags |= FLAG_CLOSE;
+};
 //

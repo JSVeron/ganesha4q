@@ -64,14 +64,14 @@ int qingstor_lookup_handle(struct qingstor_file_system *qs_fs, struct qingstor_f
 {
   QsFileSystem *fs = static_cast<QsFileSystem*>(qs_fs->fs_private);
 
-  QsFileHandle* qs_fh = fs->lookup_handle(*fh_hk);
-  if (! qs_fh) {
+  //QsFileHandle* qs_fh = fs->lookup_handle(*fh_hk);
+ // if (! qs_fh) {
     /* not found */
-    return -ENOENT;
-  }
+    //return -ENOENT;
+ // }
 
-  struct qingstor_file_handle *rfh = qs_fh->get_fh();
-  *fh = rfh;
+  //struct qingstor_file_handle *rfh = qs_fh->get_fh();
+  //*fh = rfh;
 
   return 0;
 }
@@ -178,7 +178,7 @@ int qingstor_rename(struct qingstor_file_system *qs_fs,
 /*
  attach QingStor namespace
 */
-int qingstor_mount(struct libqs_t libqsfs, const char *uid, const char *bucket_name,
+int qingstor_mount( libqs_t libqsfs, const char *uid, const char *bucket_name,
                    const char *zone, struct qingstor_file_system **qs_fs,
                    uint32_t flags)
 {
@@ -190,18 +190,17 @@ int qingstor_mount(struct libqs_t libqsfs, const char *uid, const char *bucket_n
     rc = -EINVAL;
   }
 
-  LibSDK libSDK = (LibSDK) * libqsfs;
+  LibSDK *libSDK = (LibSDK *) libqsfs;
   QingStor::QsConfig qsConfig;
-  if (libSDK.qsService)
+  if (libSDK->qsService)
   {
-    qsConfig = libSDK.qsService->GetConfig();
+    qsConfig = libSDK->qsService->GetConfig();
   }
 
-  libSDK.qsBucket = new Bucket(qsConfig, bucket_name, zone);
+  libSDK->qsBucket = new Bucket(qsConfig, bucket_name, zone);
 
   /* stash access data for "mount" */
-  QsFileSystem* new_fs = new QsFileSystem(libSDK, uid, bucket_name,
-                                          zone);
+  QsFileSystem* new_fs = new QsFileSystem(*libSDK, uid);
   //assert(new_fs);
 
   // authorize?????
@@ -213,7 +212,7 @@ int qingstor_mount(struct libqs_t libqsfs, const char *uid, const char *bucket_n
   }
   */
 
-  struct qingstor_file_system *fs = new_fs->get_fs();
+  struct qingstor_file_system *fs = new_fs->getFS();
   fs->libqsfs = libqsfs;
 
   /* XXX we no longer assume "/" is unique, but we aren't tracking the
@@ -427,6 +426,6 @@ void librgw_shutdown(libqs_t libqsfs)
   using namespace QingStor;
 
   // add time to confirm safe thread op.
-  QingStorService::shutdown();
+  QingStorService::shutdownService();
   //delete libqsfs->
 }
